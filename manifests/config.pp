@@ -12,6 +12,13 @@ class ceph::config {
     $_conf = $::ceph::conf
   }
 
+  file { '/etc/ceph/':
+    ensure  => directory,
+    owner   => $::ceph::user,
+    group   => $::ceph::group,
+    mode    => '0775',
+  }
+
   file { '/etc/ceph/ceph.conf':
     ensure  => file,
     owner   => $::ceph::user,
