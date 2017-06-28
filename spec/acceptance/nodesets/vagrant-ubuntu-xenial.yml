@@ -8,6 +8,7 @@ HOSTS:
     box: puppetlabs/ubuntu-16.04-64-nocm
     box_url: https://vagrantcloud.com/puppetlabs/boxes/ubuntu-16.04-64-nocm
     hypervisor: vagrant
+    vagrant_memsize: 4096
     volumes:
       osd0:
         size: 10000

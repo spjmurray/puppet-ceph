@@ -64,6 +64,11 @@ class ceph::mon {
         }
       }
       'systemd': {
+        exec { 'mon target enable':
+          command => '/bin/systemctl enable ceph-mon.target',
+          unless  => '/bin/systemctl is-enabled ceph-mon.target',
+        } ->
+
         exec { 'mon service enable':
           command => "/bin/systemctl enable ceph-mon@${::ceph::mon_id}",
           unless  => "/bin/systemctl is-enabled ceph-mon@${::ceph::mon_id}",

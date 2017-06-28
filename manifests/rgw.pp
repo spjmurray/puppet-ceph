@@ -52,6 +52,11 @@ class ceph::rgw {
         }
       }
       'systemd': {
+        exec { 'rgw target enable':
+          command => '/bin/systemctl enable ceph-radosgw.target',
+          unless  => '/bin/systemctl is-enabled ceph-radosgw.target',
+        } ->
+
         exec { 'rgw service enable':
           command => "/bin/systemctl enable ceph-radosgw@${::ceph::rgw_id}",
           unless  => "/bin/systemctl is-enabled ceph-radosgw@${::ceph::rgw_id}",
