@@ -32,6 +32,22 @@ Puppet::Type.newtype(:osd) do
     end
   end
 
+  newparam(:db) do
+    desc 'RocksDB metadata identifier'
+    defaultto :undef
+    validate do |value|
+      resource.validate_address(value) if value != :undef
+    end
+  end
+
+  newparam(:wal) do
+    desc 'RocksDB WAL identifier'
+    defaultto :undef
+    validate do |value|
+      resource.validate_address(value) if value != :undef
+    end
+  end
+
   newparam(:journal) do
     desc 'Journal identifier'
     defaultto :undef

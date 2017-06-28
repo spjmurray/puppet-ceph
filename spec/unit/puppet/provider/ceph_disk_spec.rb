@@ -188,19 +188,19 @@ describe Puppet::Type.type(:osd).provider(:ceph_disk) do
     it 'prepares an osd device' do
       Puppet::Util::Execution.expects(:execute).with('ceph-disk prepare --fs-type xfs /dev/sdb /dev/sdc')
 
-      described_class.osd_prepare('/dev/sdb', '/dev/sdc', 'fs-type' => 'xfs')
+      described_class.osd_prepare('/dev/sdb', '/dev/sdc', { 'fs-type' => 'xfs' }, nil, nil)
     end
 
     it 'does not emit parameters if none are given' do
       Puppet::Util::Execution.expects(:execute).with('ceph-disk prepare /dev/sdb /dev/sdc')
 
-      described_class.osd_prepare('/dev/sdb', '/dev/sdc', {})
+      described_class.osd_prepare('/dev/sdb', '/dev/sdc', {}, nil, nil)
     end
 
     it 'does not emit journal if none given' do
       Puppet::Util::Execution.expects(:execute).with('ceph-disk prepare /dev/sdb')
 
-      described_class.osd_prepare('/dev/sdb', nil, {})
+      described_class.osd_prepare('/dev/sdb', nil, {}, nil, nil)
     end
   end
 
@@ -212,21 +212,27 @@ describe Puppet::Type.type(:osd).provider(:ceph_disk) do
       described_class.stubs(:device_prepared?).with('/dev/sdb').returns(true)
 
       expect(resource.provider.exists?).to eq(true)
-      expect(resource.provider.instance_variable_get('@osd_dev')).to eq('/dev/sdb')
-      expect(resource.provider.instance_variable_get('@journal_dev')).to be_nil
+      expect(resource.provider.instance_variable_get('@osd')).to eq('/dev/sdb')
+      expect(resource.provider.instance_variable_get('@journal')).to be_nil
+      expect(resource.provider.instance_variable_get('@db')).to be_nil
+      expect(resource.provider.instance_variable_get('@wal')).to be_nil
       expect(resource.provider.instance_variable_get('@params')).to eq({})
     end
 
     it 'returns true with valid optional parameters and sets instance variables correctly' do
-      resource = described_class.resource_type.new(:name => '0:0:0:0', :journal => '1:0:0:0', :params => { 'fs-type' => 'xfs' })
+      resource = described_class.resource_type.new(:name => '0:0:0:0', :journal => '1:0:0:0', :db => '2:0:0:0', :wal => '2:0:0:1', :params => { 'fs-type' => 'xfs' })
 
       described_class.stubs(:identifier_to_dev).with('0:0:0:0').returns('/dev/sdb')
       described_class.stubs(:identifier_to_dev).with('1:0:0:0').returns('/dev/sdc')
+      described_class.stubs(:identifier_to_dev).with('2:0:0:0').returns('/dev/sdd')
+      described_class.stubs(:identifier_to_dev).with('2:0:0:1').returns('/dev/sde')
       described_class.stubs(:device_prepared?).with('/dev/sdb').returns(true)
 
       expect(resource.provider.exists?).to eq(true)
-      expect(resource.provider.instance_variable_get('@osd_dev')).to eq('/dev/sdb')
-      expect(resource.provider.instance_variable_get('@journal_dev')).to eq('/dev/sdc')
+      expect(resource.provider.instance_variable_get('@osd')).to eq('/dev/sdb')
+      expect(resource.provider.instance_variable_get('@journal')).to eq('/dev/sdc')
+      expect(resource.provider.instance_variable_get('@db')).to eq('/dev/sdd')
+      expect(resource.provider.instance_variable_get('@wal')).to eq('/dev/sde')
       expect(resource.provider.instance_variable_get('@params')).to eq('fs-type' => 'xfs')
     end
 
@@ -257,7 +263,7 @@ describe Puppet::Type.type(:osd).provider(:ceph_disk) do
       described_class.stubs(:identifier_to_dev).with('0:0:0:0').returns('/dev/sdb')
       described_class.stubs(:identifier_to_dev).with('1:0:0:0').returns('/dev/sdc')
       described_class.stubs(:device_prepared?).with('/dev/sdb').returns(true)
-      described_class.expects(:osd_prepare).with('/dev/sdb', '/dev/sdc', {})
+      described_class.expects(:osd_prepare).with('/dev/sdb', '/dev/sdc', {}, nil, nil)
 
       resource.provider.exists?
       resource.provider.create

@@ -33,19 +33,15 @@ describe 'ceph' do
       disks = <<-EOS
         disks => {
           'defaults' => {
+            'db'     => '5:0:0:0',
+            'wal'    => '5:0:0:0',
             'params' => {
               'fs-type' => 'xfs',
             },
           },
-          '2:0:0:0' => {
-            'journal' => '5:0:0:0',
-          },
-          '3:0:0:0' => {
-            'journal' => '5:0:0:0',
-          },
-          '4:0:0:0' => {
-            'journal' => '5:0:0:0',
-          },
+          '2:0:0:0' => {},
+          '3:0:0:0' => {},
+          '4:0:0:0' => {},
         },
       EOS
     elsif default['hypervisor'] == 'openstack'
