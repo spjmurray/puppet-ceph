@@ -57,7 +57,8 @@ the special name `defaults`.
 | 1.4.x   | Ubuntu 14.04, Centos 7                 | 9    | 3, 4   |
 | 1.5.x   | Ubuntu 14.04, Ubuntu 16.04\*, Centos 7 | 10   | 3, 4   |
 | 2.0.x   | Ubuntu 14.04, Ubuntu 16.04\*, Centos 7 | 10   | 3, 4   |
-| 3.x.x   | Ubuntu 14.04, Ubuntu 16.04, Centos 7   | 10   | 4      |
+| 3.1.x   | Ubuntu 14.04, Ubuntu 16.04, Centos 7   | 10   | 4      |
+| 3.2.x   | Ubuntu 14.04, Ubuntu 16.04, Centos 7   | 12   | 4      |
 
 \* Ubuntu 16.04 only tested with Puppet 4
 
@@ -81,7 +82,7 @@ ceph::osd: true
 
 # Install options
 ceph::manage_repo: true
-ceph::repo_version: 'giant'
+ceph::repo_version: 'luminious'
 
 # ceph.conf
 ceph::conf:

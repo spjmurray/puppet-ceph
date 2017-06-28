@@ -4,22 +4,24 @@ describe 'ceph' do
   context 'initialization' do
     # As of 10.2.0 127.0.0.0/8 doesn't work, so use the VM's IP
     conf = <<-EOS
-       conf => {
-         'global'                => {
-           'fsid'                      => '62ed9bd6-adf4-11e4-8fb5-3c970ebb2b86',
-           'mon_initial_members'       => $::hostname,
-           'mon_host'                  => '#{default.get_ip}',
-           'public_network'            => '#{default.get_ip}/32',
-           'cluster_network'           => '#{default.get_ip}/32',
-           'auth_supported'            => 'cephx',
-           'filestore_xattr_use_omap'  => true,
-           'osd_crush_chooseleaf_type' => 0,
-         },
-         'osd'                   => {
-           'osd_journal_size' => 100,
-         },
-         'client.radosgw.puppet' => {
-           'keyring'       => '/etc/ceph/ceph.client.radosgw.puppet.keyring',
+      conf => {
+        'global'                => {
+          'fsid'                      => '62ed9bd6-adf4-11e4-8fb5-3c970ebb2b86',
+          'mon_initial_members'       => $::hostname,
+          'mon_host'                  => '#{default.get_ip}',
+          'public_network'            => '#{default.get_ip}/32',
+          'cluster_network'           => '#{default.get_ip}/32',
+          'auth_supported'            => 'cephx',
+          'filestore_xattr_use_omap'  => true,
+          'osd_crush_chooseleaf_type' => 0,
+        },
+        'mgr'                   => {
+          'mgr modules' => 'dashboard',
+        },
+        'osd'                   => {
+          'osd_journal_size' => 100,
+        },
+        'client.rgw.puppet'     => {
           'rgw frontends' => '"civetweb port=7480"'
         },
       },
@@ -89,8 +91,12 @@ describe 'ceph' do
       apply_manifest(pp, :catch_changes => true)
     end
 
+    it 'mgr accepts http requests' do
+      retry_on(default, 'netstat -ln | grep -w 7000', :max_retries => 120)
+    end
+
     it 'rgw accepts http requests' do
-      retry_on(default, 'netstat -l | grep 7480', :max_retries => 120)
+      retry_on(default, 'netstat -ln | grep -w 7480', :max_retries => 120)
     end
 
     it 'mds is active' do
@@ -107,8 +113,12 @@ describe 'ceph' do
       default.wait_for_port(22) # Takes a while for Centos
     end
 
+    it 'mgr accepts http requests' do
+      retry_on(default, 'netstat -ln | grep -w 7000', :max_retries => 120)
+    end
+
     it 'rgw accepts http requests' do
-      retry_on(default, 'netstat -l | grep 7480', :max_retries => 120)
+      retry_on(default, 'netstat -ln | grep -w 7480', :max_retries => 120)
     end
 
     it 'mds is active' do

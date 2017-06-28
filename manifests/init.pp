@@ -72,7 +72,7 @@ class ceph (
   # Package management
   Boolean $manage_repo = true,
   String $repo_mirror = 'eu.ceph.com',
-  String $repo_version = 'jewel',
+  String $repo_version = 'luminous',
   # Package management
   String $package_ensure = 'installed',
   # User management
@@ -93,12 +93,19 @@ class ceph (
       'filestore_xattr_use_omap'  => true,
       'osd_crush_chooseleaf_type' => 0,
     },
+    'mgr'                   => {
+      'mgr modules' => 'dashboard',
+    },
     'osd'                   => {
       'osd_journal_size' => 100,
     },
-    'client.rgw.puppet' => {
+    'client.rgw.puppet'     => {
       'rgw frontends' => '"civetweb port=7480"'
     },
+  },
+  Ceph::ConfigKeys $config_keys = {
+    'mgr/dashboard/server_addr' => '0.0.0.0',
+    'mgr/dashboard/server_port' => 7000,
   },
   # Monitor configuration
   String $mon_id = $::hostname,
@@ -166,6 +173,8 @@ class ceph (
   contain ::ceph::service
   contain ::ceph::mon
   contain ::ceph::auth
+  contain ::ceph::configkeys
+  contain ::ceph::mgr
   contain ::ceph::osd
   contain ::ceph::rgw
   contain ::ceph::mds
@@ -176,6 +185,8 @@ class ceph (
   Class['::ceph::service'] ->
   Class['::ceph::mon'] ->
   Class['::ceph::auth'] ->
+  Class['::ceph::configkeys'] ->
+  Class['::ceph::mgr'] ->
   Class['::ceph::osd'] ->
   Class['::ceph::rgw'] ->
   Class['::ceph::mds']
