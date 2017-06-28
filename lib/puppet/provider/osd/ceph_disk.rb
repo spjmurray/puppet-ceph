@@ -80,10 +80,11 @@ private
   # +data+:: Data device
   # +journal+:: Journal device
   # +params+:: Parameter hash
-  def self.osd_prepare(data, journal, params)
-    params = format_params(params)
+  def self.osd_prepare(data, journal, params, db, wal)
     command = 'ceph-disk prepare'
-    command << " #{params}" unless params.empty?
+    command << " #{format_params(params)}" unless params.empty?
+    command << " --block.db #{db}" if db
+    command << " --block.wal #{wal}" if wal
     command << " #{data}"
     command << " #{journal}" if journal
     Puppet::Util::Execution.execute(command)
@@ -91,12 +92,16 @@ private
 
   # Evaluate arguments
   def eval_arguments
-    @osd_dev = self.class.identifier_to_dev(resource[:name])
-    return false unless @osd_dev
-    if resource[:journal] != :undef
-      @journal_dev = self.class.identifier_to_dev(resource[:journal])
-      return false unless @journal_dev
+    # Translate required device arguments
+    return false unless (@osd = self.class.identifier_to_dev(resource[:name]))
+
+    # Select present optional device arguments, then translate them
+    optional = %i[journal db wal].reject { |x| resource[x] == :undef }
+    optional.each do |param|
+      return false unless (dev = self.class.identifier_to_dev(resource[param]))
+      instance_variable_set("@#{param}", dev)
     end
+
     @params = resource[:params] == :undef && {} || resource[:params]
     true
   end
@@ -105,7 +110,7 @@ public
 
   # Create the resource
   def create
-    self.class.osd_prepare(@osd_dev, @journal_dev, @params)
+    self.class.osd_prepare(@osd, @journal, @params, @db, @wal)
   end
 
   # Destroy the resource
@@ -121,6 +126,6 @@ public
       return true
     end
     # Check if the OSD device has been prepared
-    self.class.device_prepared? @osd_dev
+    self.class.device_prepared?(@osd)
   end
 end

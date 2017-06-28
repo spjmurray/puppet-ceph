@@ -48,6 +48,11 @@ class ceph::mds {
         }
       }
       'systemd': {
+        exec { 'mds target enable':
+          command => '/bin/systemctl enable ceph-mds.target',
+          unless  => '/bin/systemctl is-enabled ceph-mds.target',
+        } ->
+
         exec { 'mds service enable':
           command => "/bin/systemctl enable ceph-mds@${::ceph::mds_id}",
           unless  => "/bin/systemctl is-enabled ceph-mds@${::ceph::mds_id}",
