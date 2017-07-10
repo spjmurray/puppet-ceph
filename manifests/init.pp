@@ -162,7 +162,6 @@ class ceph (
   # MDS management
   String $mds_id = $::hostname,
   # Parameters
-  String $service_provider = $::ceph::params::service_provider,
   String $radosgw_package = $::ceph::params::radosgw_package,
   Ceph::Packages $prerequisites = $::ceph::params::prerequisites,
 ) inherits ceph::params {

@@ -33,41 +33,20 @@ class ceph::mds {
       user    => $::ceph::user,
     } ->
 
-    Exec['mds service start']
+    exec { 'mds target enable':
+      command => '/bin/systemctl enable ceph-mds.target',
+      unless  => '/bin/systemctl is-enabled ceph-mds.target',
+    } ->
 
-    case $::ceph::service_provider {
-      'upstart': {
-        file { "/var/lib/ceph/mds/ceph-${::ceph::mds_id}/upstart":
-          ensure => file,
-          mode   => '0644',
-        } ->
+    exec { 'mds service enable':
+      command => "/bin/systemctl enable ceph-mds@${::ceph::mds_id}",
+      unless  => "/bin/systemctl is-enabled ceph-mds@${::ceph::mds_id}",
+    } ->
 
-        exec { 'mds service start':
-          command => "/sbin/start ceph-mds id=${::ceph::mds_id}",
-          unless  => "/sbin/status ceph-mds id=${::ceph::mds_id}",
-        }
-      }
-      'systemd': {
-        exec { 'mds target enable':
-          command => '/bin/systemctl enable ceph-mds.target',
-          unless  => '/bin/systemctl is-enabled ceph-mds.target',
-        } ->
-
-        exec { 'mds service enable':
-          command => "/bin/systemctl enable ceph-mds@${::ceph::mds_id}",
-          unless  => "/bin/systemctl is-enabled ceph-mds@${::ceph::mds_id}",
-        } ->
-
-        exec { 'mds service start':
-          command => "/bin/systemctl start ceph-mds@${::ceph::mds_id}",
-          unless  => "/bin/systemctl status ceph-mds@${::ceph::mds_id}",
-        }
-      }
-      default: {
-        crit('Unsupported service provider')
-      }
+    exec { 'mds service start':
+      command => "/bin/systemctl start ceph-mds@${::ceph::mds_id}",
+      unless  => "/bin/systemctl status ceph-mds@${::ceph::mds_id}",
     }
-
 
   }
 

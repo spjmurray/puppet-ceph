@@ -46,42 +46,21 @@ class ceph::mon {
       creates => '/var/lib/ceph/bootstrap-rgw/ceph.keyring',
     } ->
 
-    # Finally start the service
     Exec['mon service start']
 
-    case $::ceph::service_provider {
-      'upstart': {
-        Exec['mon create'] ->
+    exec { 'mon target enable':
+      command => '/bin/systemctl enable ceph-mon.target',
+      unless  => '/bin/systemctl is-enabled ceph-mon.target',
+    } ->
 
-        file { "/var/lib/ceph/mon/ceph-${::ceph::mon_id}/upstart":
-          ensure => file,
-          mode   => '0644',
-        } ->
+    exec { 'mon service enable':
+      command => "/bin/systemctl enable ceph-mon@${::ceph::mon_id}",
+      unless  => "/bin/systemctl is-enabled ceph-mon@${::ceph::mon_id}",
+    } ->
 
-        exec { 'mon service start':
-          command => "/sbin/start ceph-mon id=${::ceph::mon_id}",
-          unless  => "/sbin/status ceph-mon id=${::ceph::mon_id}",
-        }
-      }
-      'systemd': {
-        exec { 'mon target enable':
-          command => '/bin/systemctl enable ceph-mon.target',
-          unless  => '/bin/systemctl is-enabled ceph-mon.target',
-        } ->
-
-        exec { 'mon service enable':
-          command => "/bin/systemctl enable ceph-mon@${::ceph::mon_id}",
-          unless  => "/bin/systemctl is-enabled ceph-mon@${::ceph::mon_id}",
-        } ->
-
-        exec { 'mon service start':
-          command => "/bin/systemctl start ceph-mon@${::ceph::mon_id}",
-          unless  => "/bin/systemctl status ceph-mon@${::ceph::mon_id}",
-        }
-      }
-      default: {
-        crit('Unsupported service provider')
-      }
+    exec { 'mon service start':
+      command => "/bin/systemctl start ceph-mon@${::ceph::mon_id}",
+      unless  => "/bin/systemctl status ceph-mon@${::ceph::mon_id}",
     }
 
   }

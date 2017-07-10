@@ -37,41 +37,20 @@ class ceph::rgw {
       user    => $::ceph::user,
     } ->
 
-    Exec['rgw service start']
+    exec { 'rgw target enable':
+      command => '/bin/systemctl enable ceph-radosgw.target',
+      unless  => '/bin/systemctl is-enabled ceph-radosgw.target',
+    } ->
 
-    case $::ceph::service_provider {
-      'upstart': {
-        file { "/var/lib/ceph/radosgw/ceph-${::ceph::rgw_id}/upstart":
-          ensure => file,
-          mode   => '0644',
-        } ->
+    exec { 'rgw service enable':
+      command => "/bin/systemctl enable ceph-radosgw@${::ceph::rgw_id}",
+      unless  => "/bin/systemctl is-enabled ceph-radosgw@${::ceph::rgw_id}",
+    } ->
 
-        exec { 'rgw service start':
-          command => "/sbin/start radosgw id=${::ceph::rgw_id}",
-          unless  => "/sbin/status radosgw id=${::ceph::rgw_id}",
-        }
-      }
-      'systemd': {
-        exec { 'rgw target enable':
-          command => '/bin/systemctl enable ceph-radosgw.target',
-          unless  => '/bin/systemctl is-enabled ceph-radosgw.target',
-        } ->
-
-        exec { 'rgw service enable':
-          command => "/bin/systemctl enable ceph-radosgw@${::ceph::rgw_id}",
-          unless  => "/bin/systemctl is-enabled ceph-radosgw@${::ceph::rgw_id}",
-        } ->
-
-        exec { 'rgw service start':
-          command => "/bin/systemctl start ceph-radosgw@${::ceph::rgw_id}",
-          unless  => "/bin/systemctl status ceph-radosgw@${::ceph::rgw_id}",
-        }
-      }
-      default: {
-        crit('Unsupported service provider')
-      }
+    exec { 'rgw service start':
+      command => "/bin/systemctl start ceph-radosgw@${::ceph::rgw_id}",
+      unless  => "/bin/systemctl status ceph-radosgw@${::ceph::rgw_id}",
     }
-
   }
 
 }
