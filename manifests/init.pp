@@ -39,10 +39,17 @@
 #
 # [*conf_merge*]
 #   Ignore the value bound to ceph::conf and perform a
-#   hiera_hash call to merge config fragments tegether
+#   hiera_hash call to merge config fragments together
 #
 # [*conf*]
 #   Hash of ceph config file
+#
+# [*configkeys_merge*]
+#   Ignore the value bound to ceph::configkeys and perform a
+#   hiera_hash call to merge config keys together
+#
+# [*configkeys*]
+#   Hash of config keys
 #
 # [*mon_id*]
 #   Human readable monitor name, defaults to hostname
@@ -100,6 +107,8 @@ class ceph (
       'rgw frontends' => '"civetweb port=7480"'
     },
   },
+  Ceph::ConfigKeys $configkeys = {},
+  Boolean $configkeys_merge = false,
   # Monitor configuration
   String $mon_id = $::hostname,
   String $mon_key = 'AQA7yNlUMy3sFhAA62XHf57L0QhSI44qqqOVXA==',
@@ -169,6 +178,7 @@ class ceph (
   contain ::ceph::osd
   contain ::ceph::rgw
   contain ::ceph::mds
+  contain ::ceph::configkeys
 
   Class['::ceph::repo'] ->
   Class['::ceph::install'] ->
@@ -178,6 +188,7 @@ class ceph (
   Class['::ceph::auth'] ->
   Class['::ceph::osd'] ->
   Class['::ceph::rgw'] ->
-  Class['::ceph::mds']
+  Class['::ceph::mds'] ->
+  Class['::ceph::configkeys']
 
 }
