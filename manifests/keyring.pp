@@ -24,6 +24,9 @@
 # [*caps_osd*]
 #   Object storage daemon capabilities
 #
+# [*caps_mgr*]
+#   Manager capabilities
+#
 # [*owner*]
 #   Keyring file owner
 #
@@ -39,6 +42,7 @@ define ceph::keyring (
   $caps_mon = undef,
   $caps_mds = undef,
   $caps_osd = undef,
+  $caps_mgr = undef,
   $owner = $::ceph::user,
   $group = $::ceph::group,
   $mode = '0644',

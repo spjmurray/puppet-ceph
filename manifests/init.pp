@@ -39,7 +39,7 @@
 #
 # [*conf_merge*]
 #   Ignore the value bound to ceph::conf and perform a
-#   hiera_hash call to merge config fragments tegether
+#   hiera_hash call to merge config fragments together
 #
 # [*conf*]
 #   Hash of ceph config file
