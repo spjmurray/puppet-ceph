@@ -200,9 +200,9 @@ describe 'ceph', :type => :class do
 
     context 'ceph::service' do
       it 'enables the ceph target on a systemd system' do
-        is_expected.to contain_exec('ceph.target enable').with(
-          'command' => '/bin/systemctl enable ceph.target',
-          'unless' => '/bin/systemctl is-enabled ceph.target'
+        is_expected.to contain_service('ceph.target').with(
+          'ensure' => 'running',
+          'enable' => true
         )
       end
     end
@@ -218,7 +218,7 @@ describe 'ceph', :type => :class do
       end
 
       it 'creates the monitor before starting the service' do
-        is_expected.to contain_exec('mon create').that_comes_before('Exec[mon service start]')
+        is_expected.to contain_exec('mon create').that_comes_before('Service[ceph-mon@test]')
       end
 
       it 'creates the monitor before creating the init flags' do
@@ -230,52 +230,48 @@ describe 'ceph', :type => :class do
           'owner' => 'mickey',
           'group' => 'mouse',
           'mode' => '0644'
-        )
-      end
-
-      it 'creates a monitor done file before stating the service' do
-        is_expected.to contain_file('/var/lib/ceph/mon/ceph-test/done').that_comes_before('Exec[mon service start]')
+        ).that_comes_before('Service[ceph-mon@test]')
       end
 
       it 'creates client.admin keyring to stop ceph-create-keys from injecting new values' do
         is_expected.to contain_exec('mon inhibit create client.admin').with(
           'command' => '/usr/bin/touch /etc/ceph/ceph.client.admin.keyring',
           'creates' => '/etc/ceph/ceph.client.admin.keyring'
-        ).that_comes_before('Exec[mon service start]')
+        ).that_comes_before('Service[ceph-mon@test]')
       end
 
       it 'creates client.bootstrap-osd keyring to stop ceph-create-keys from injecting new values' do
         is_expected.to contain_exec('mon inhibit create client.bootstrap-osd').with(
           'command' => '/usr/bin/touch /var/lib/ceph/bootstrap-osd/ceph.keyring',
           'creates' => '/var/lib/ceph/bootstrap-osd/ceph.keyring'
-        ).that_comes_before('Exec[mon service start]')
+        ).that_comes_before('Service[ceph-mon@test]')
       end
 
       it 'creates client.bootstrap-mds keyring to stop ceph-create-keys from injecting new values' do
         is_expected.to contain_exec('mon inhibit create client.bootstrap-mds').with(
           'command' => '/usr/bin/touch /var/lib/ceph/bootstrap-mds/ceph.keyring',
           'creates' => '/var/lib/ceph/bootstrap-mds/ceph.keyring'
-        ).that_comes_before('Exec[mon service start]')
+        ).that_comes_before('Service[ceph-mon@test]')
       end
 
       it 'creates client.bootstrap-rgw keyring to stop ceph-create-keys from injecting new values' do
         is_expected.to contain_exec('mon inhibit create client.bootstrap-rgw').with(
           'command' => '/usr/bin/touch /var/lib/ceph/bootstrap-rgw/ceph.keyring',
           'creates' => '/var/lib/ceph/bootstrap-rgw/ceph.keyring'
-        ).that_comes_before('Exec[mon service start]')
+        ).that_comes_before('Service[ceph-mon@test]')
       end
 
-      it 'enables the service on a systemd system' do
-        is_expected.to contain_exec('mon service enable').with(
-          'command' => '/bin/systemctl enable ceph-mon@test',
-          'unless' => '/bin/systemctl is-enabled ceph-mon@test'
-        ).that_comes_before('Exec[mon service start]')
+      it 'enables and starts the target on a systemd system' do
+        is_expected.to contain_service('ceph-mon.target').with(
+          'ensure' => 'running',
+          'enable' => true
+        ).that_comes_before('Service[ceph-mon@test]')
       end
 
-      it 'starts the service' do
-        is_expected.to contain_exec('mon service start').with(
-          'command' => '/bin/systemctl start ceph-mon@test',
-          'unless' => '/bin/systemctl status ceph-mon@test'
+      it 'enables and starts the service on a systemd system' do
+        is_expected.to contain_service('ceph-mon@test').with(
+          'ensure' => 'running',
+          'enable' => true
         )
       end
     end
@@ -332,7 +328,9 @@ describe 'ceph', :type => :class do
 
     context 'ceph::rgw' do
       it 'contains the rgw package with the correct version before starting the service' do
-        is_expected.to contain_package('radosgw').with('ensure' => '10.2.3').that_comes_before('Exec[rgw service start]')
+        is_expected.to contain_package('radosgw').with(
+          'ensure' => '10.2.3'
+        ).that_comes_before('Service[ceph-radosgw@rgw.test]')
       end
 
       it 'creates the rgw directory' do
@@ -357,7 +355,7 @@ describe 'ceph', :type => :class do
       end
 
       it 'creates an rgw done file before stating the service' do
-        is_expected.to contain_file('/var/lib/ceph/radosgw/ceph-rgw.test/done').that_comes_before('Exec[rgw service start]')
+        is_expected.to contain_file('/var/lib/ceph/radosgw/ceph-rgw.test/done').that_comes_before('Service[ceph-radosgw@rgw.test]')
       end
 
       it 'creates the keyring before starting the service' do
@@ -365,20 +363,20 @@ describe 'ceph', :type => :class do
           'command' => "/usr/bin/ceph --name client.bootstrap-rgw --keyring /var/lib/ceph/bootstrap-rgw/ceph.keyring auth get-or-create client.rgw.test mon 'allow rw' osd 'allow rwx' -o /var/lib/ceph/radosgw/ceph-rgw.test/keyring",
           'creates' => '/var/lib/ceph/radosgw/ceph-rgw.test/keyring',
           'user' => 'mickey'
-        ).that_comes_before('Exec[rgw service start]')
+        ).that_comes_before('Service[ceph-radosgw@rgw.test]')
       end
 
-      it 'enables the service on a systemd system' do
-        is_expected.to contain_exec('rgw service enable').with(
-          'command' => '/bin/systemctl enable ceph-radosgw@rgw.test',
-          'unless' => '/bin/systemctl is-enabled ceph-radosgw@rgw.test'
-        ).that_comes_before('Exec[rgw service start]')
+      it 'enables the target on a systemd system' do
+        is_expected.to contain_service('ceph-radosgw.target').with(
+          'ensure' => 'running',
+          'enable' => true
+        ).that_comes_before('Service[ceph-radosgw@rgw.test]')
       end
 
-      it 'starts the service' do
-        is_expected.to contain_exec('rgw service start').with(
-          'command' => '/bin/systemctl start ceph-radosgw@rgw.test',
-          'unless' => '/bin/systemctl status ceph-radosgw@rgw.test'
+      it 'enables and starts the service' do
+        is_expected.to contain_service('ceph-radosgw@rgw.test').with(
+          'ensure' => 'running',
+          'enable' => true
         )
       end
     end
@@ -406,7 +404,7 @@ describe 'ceph', :type => :class do
       end
 
       it 'creates an mds done file before stating the service' do
-        is_expected.to contain_file('/var/lib/ceph/mds/ceph-test/done').that_comes_before('Exec[mds service start]')
+        is_expected.to contain_file('/var/lib/ceph/mds/ceph-test/done').that_comes_before('Service[ceph-mds@test]')
       end
 
       it 'creates the keyring before starting the service' do
@@ -414,20 +412,20 @@ describe 'ceph', :type => :class do
           'command' => "/usr/bin/ceph --name client.bootstrap-mds --keyring /var/lib/ceph/bootstrap-mds/ceph.keyring auth get-or-create mds.test mon 'allow profile mds' osd 'allow rwx' mds allow -o /var/lib/ceph/mds/ceph-test/keyring",
           'creates' => '/var/lib/ceph/mds/ceph-test/keyring',
           'user' => 'mickey'
-        ).that_comes_before('Exec[mds service start]')
+        ).that_comes_before('Service[ceph-mds@test]')
       end
 
-      it 'enables the service on a systemd system' do
-        is_expected.to contain_exec('mds service enable').with(
-          'command' => '/bin/systemctl enable ceph-mds@test',
-          'unless' => '/bin/systemctl is-enabled ceph-mds@test'
-        ).that_comes_before('Exec[mds service start]')
+      it 'enables the target on a systemd system' do
+        is_expected.to contain_service('ceph-mds.target').with(
+          'ensure' => 'running',
+          'enable' => true
+        ).that_comes_before('Service[ceph-mds@test]')
       end
 
-      it 'starts the service' do
-        is_expected.to contain_exec('mds service start').with(
-          'command' => '/bin/systemctl start ceph-mds@test',
-          'unless' => '/bin/systemctl status ceph-mds@test'
+      it 'enables and starts the service' do
+        is_expected.to contain_service('ceph-mds@test').with(
+          'ensure' => 'running',
+          'enable' => true
         )
       end
     end
@@ -464,7 +462,7 @@ describe 'ceph', :type => :class do
 
     context 'ceph::rgw' do
       it 'contains the rgw package with the correct version before starting the service' do
-        is_expected.to contain_package('ceph-radosgw').with('ensure' => '10.2.3').that_comes_before('Exec[rgw service start]')
+        is_expected.to contain_package('ceph-radosgw').with('ensure' => '10.2.3').that_comes_before('Service[ceph-radosgw@rgw.test]')
       end
     end
   end
