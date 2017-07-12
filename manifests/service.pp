@@ -4,9 +4,9 @@
 #
 class ceph::service {
 
-  exec { 'ceph.target enable':
-    command => '/bin/systemctl enable ceph.target',
-    unless  => '/bin/systemctl is-enabled ceph.target',
+  service { 'ceph.target':
+    ensure => running,
+    enable => true,
   }
 
 }

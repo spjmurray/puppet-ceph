@@ -33,19 +33,14 @@ class ceph::mds {
       user    => $::ceph::user,
     } ->
 
-    exec { 'mds target enable':
-      command => '/bin/systemctl enable ceph-mds.target',
-      unless  => '/bin/systemctl is-enabled ceph-mds.target',
+    service { 'ceph-mds.target':
+      ensure => running,
+      enable => true,
     } ->
 
-    exec { 'mds service enable':
-      command => "/bin/systemctl enable ceph-mds@${::ceph::mds_id}",
-      unless  => "/bin/systemctl is-enabled ceph-mds@${::ceph::mds_id}",
-    } ->
-
-    exec { 'mds service start':
-      command => "/bin/systemctl start ceph-mds@${::ceph::mds_id}",
-      unless  => "/bin/systemctl status ceph-mds@${::ceph::mds_id}",
+    service { "ceph-mds@${::ceph::mds_id}":
+      ensure => running,
+      enable => true,
     }
 
   }

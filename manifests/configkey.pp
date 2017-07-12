@@ -12,6 +12,10 @@ define ceph::configkey (
   exec { "ceph::configkey ${name}":
     command => "/usr/bin/ceph config-key put ${name} ${value}",
     unless  => "/usr/bin/ceph config-key get ${name} 2> /dev/null | grep ^${value}\$",
-  }
+  } ~>
+
+  # Restart the manager if we install new config keys so things like IP addesses
+  # and bind ports are picked up
+  Class['ceph::mgr']
 
 }

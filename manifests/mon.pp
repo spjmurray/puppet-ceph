@@ -46,21 +46,14 @@ class ceph::mon {
       creates => '/var/lib/ceph/bootstrap-rgw/ceph.keyring',
     } ->
 
-    Exec['mon service start']
-
-    exec { 'mon target enable':
-      command => '/bin/systemctl enable ceph-mon.target',
-      unless  => '/bin/systemctl is-enabled ceph-mon.target',
+    service { 'ceph-mon.target':
+      ensure => running,
+      enable => true,
     } ->
 
-    exec { 'mon service enable':
-      command => "/bin/systemctl enable ceph-mon@${::ceph::mon_id}",
-      unless  => "/bin/systemctl is-enabled ceph-mon@${::ceph::mon_id}",
-    } ->
-
-    exec { 'mon service start':
-      command => "/bin/systemctl start ceph-mon@${::ceph::mon_id}",
-      unless  => "/bin/systemctl status ceph-mon@${::ceph::mon_id}",
+    service { "ceph-mon@${::ceph::mon_id}":
+      ensure => running,
+      enable => true,
     }
 
   }

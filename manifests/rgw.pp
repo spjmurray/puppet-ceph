@@ -37,20 +37,16 @@ class ceph::rgw {
       user    => $::ceph::user,
     } ->
 
-    exec { 'rgw target enable':
-      command => '/bin/systemctl enable ceph-radosgw.target',
-      unless  => '/bin/systemctl is-enabled ceph-radosgw.target',
+    service { 'ceph-radosgw.target':
+      ensure => running,
+      enable => true,
     } ->
 
-    exec { 'rgw service enable':
-      command => "/bin/systemctl enable ceph-radosgw@${::ceph::rgw_id}",
-      unless  => "/bin/systemctl is-enabled ceph-radosgw@${::ceph::rgw_id}",
-    } ->
-
-    exec { 'rgw service start':
-      command => "/bin/systemctl start ceph-radosgw@${::ceph::rgw_id}",
-      unless  => "/bin/systemctl status ceph-radosgw@${::ceph::rgw_id}",
+    service { "ceph-radosgw@${::ceph::rgw_id}":
+      ensure => running,
+      enable => true,
     }
+
   }
 
 }
