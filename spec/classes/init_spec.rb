@@ -62,6 +62,9 @@ describe 'ceph', :type => :class do
           'caps_osd' => 'allow *',
           'caps_mds' => 'allow'
         }
+      },
+      :config_keys => {
+        'kermit' => 'frog'
       }
     }
   end
@@ -116,12 +119,36 @@ describe 'ceph', :type => :class do
         is_expected.to contain_class('ceph::config').that_comes_before('Class[ceph::mds]')
       end
 
+      it 'configures ceph before installing a mgr' do
+        is_expected.to contain_class('ceph::config').that_comes_before('Class[ceph::mgr]')
+      end
+
       it 'configures systemd to enable the ceph target' do
         is_expected.to contain_class('ceph::service')
       end
 
       it 'configures a monitor before installing keys' do
         is_expected.to contain_class('ceph::mon').that_comes_before('Class[ceph::auth]')
+      end
+
+      it 'configures a monitor before configuring config-keys' do
+        is_expected.to contain_class('ceph::mon').that_comes_before('Class[ceph::configkeys]')
+      end
+
+      it 'configures config-keys before configuring a mgr' do
+        is_expected.to contain_class('ceph::configkeys').that_comes_before('Class[ceph::mgr]')
+      end
+
+      it 'installs the manager before installing an osd' do
+        is_expected.to contain_class('ceph::mgr').that_comes_before('Class[ceph::osd]')
+      end
+
+      it 'installs the manager before installing a rgw' do
+        is_expected.to contain_class('ceph::mgr').that_comes_before('Class[ceph::rgw]')
+      end
+
+      it 'installs the manager before installing a mds' do
+        is_expected.to contain_class('ceph::mgr').that_comes_before('Class[ceph::mds]')
       end
 
       it 'installs bootstrap keys before installing an osd' do
@@ -424,6 +451,39 @@ describe 'ceph', :type => :class do
 
       it 'enables and starts the service' do
         is_expected.to contain_service('ceph-mds@test').with(
+          'ensure' => 'running',
+          'enable' => true
+        )
+      end
+    end
+
+    context 'ceph::configkeys' do
+      it 'creates config key' do
+        is_expected.to contain_ceph__configkey('kermit').with(
+          'value' => 'frog'
+        )
+      end
+    end
+
+    context 'ceph::configkey' do
+      it 'creates or updates the key' do
+        is_expected.to contain_exec('ceph::configkey kermit').with(
+          'command' => '/usr/bin/ceph config-key put kermit frog',
+          'unless'  => '/usr/bin/ceph config-key get kermit 2> /dev/null | grep ^frog$'
+        ).that_notifies('Class[ceph::mgr]')
+      end
+    end
+
+    context 'ceph::mgr' do
+      it 'enables the target on a systemd system' do
+        is_expected.to contain_service('ceph-mgr.target').with(
+          'ensure' => 'running',
+          'enable' => true
+        ).that_comes_before('Service[ceph-mgr@test]')
+      end
+
+      it 'enables and starts the service' do
+        is_expected.to contain_service('ceph-mgr@test').with(
           'ensure' => 'running',
           'enable' => true
         )
