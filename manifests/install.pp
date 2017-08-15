@@ -8,5 +8,16 @@ class ceph::install {
     ensure => $::ceph::package_ensure,
   }
 
+  if $::facts['os']['name'] == 'Ubuntu' and $::ceph::service_provider == 'systemd' {
+    Package['ceph'] ~>
+
+    # Oddly I've seen OSD udev rules not applying on Xenial which are
+    # fixed with a reload
+    exec { 'ceph::install udev reload':
+      command     => '/bin/systemctl restart udev',
+      refreshonly => true,
+    }
+  }
+
   ensure_packages($::ceph::prerequisites)
 }

@@ -178,6 +178,13 @@ describe 'ceph', :type => :class do
       it 'contains the ceph package with the version specified' do
         is_expected.to contain_package('ceph').with('ensure' => '10.2.3')
       end
+
+      it 'reloads udev on a systemd system' do
+        is_expected.to contain_exec('ceph::install udev reload').with(
+          'command' => '/bin/systemctl restart udev',
+          'refreshonly' => 'true'
+        ).that_subscribes_to('Package[ceph]')
+      end
     end
 
     context 'ceph::config' do
@@ -196,13 +203,6 @@ describe 'ceph', :type => :class do
         is_expected.to contain_exec('ceph.target enable').with(
           'command' => '/bin/systemctl enable ceph.target',
           'unless' => '/bin/systemctl is-enabled ceph.target'
-        )
-      end
-
-      it 'reloads systemctl on a systemd system' do
-        is_expected.to contain_exec('ceph::service systemctl reload').with(
-          'command' => '/bin/systemctl daemon-reload',
-          'refreshonly' => 'true'
         )
       end
     end
