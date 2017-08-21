@@ -8,7 +8,7 @@ class ceph::install {
     ensure => $::ceph::package_ensure,
   }
 
-  if $::facts['os']['name'] == 'Ubuntu' and $::ceph::service_provider == 'systemd' {
+  if $::facts['os']['name'] == 'Ubuntu' {
     Package['ceph'] ~>
 
     # Oddly I've seen OSD udev rules not applying on Xenial which are
