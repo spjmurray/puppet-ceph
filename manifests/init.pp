@@ -57,6 +57,9 @@
 # [*keys*]
 #   Hash of ceph::keyring resources to be created
 #
+# [*modules*]
+#   List of manager modules to enable
+#
 # [*disks*]
 #   Hash of osd resources to create
 #
@@ -119,6 +122,12 @@ class ceph (
       'caps_mon' => 'allow *',
       'caps_osd' => 'allow *',
       'caps_mds' => 'allow',
+      'caps_mgr' => 'allow *',
+    },
+    '/var/lib/ceph/bootstrap-mgr/ceph.keyring' => {
+      'user'     => 'client.bootstrap-mgr',
+      'key'      => 'AQC82ppZVlWnABAAPCihMcu7yoTtyjGiCwycDA==',
+      'caps_mon' => 'allow profile bootstrap-mgr',
     },
     '/var/lib/ceph/bootstrap-rgw/ceph.keyring' => {
       'user'     => 'client.bootstrap-rgw',
@@ -136,6 +145,12 @@ class ceph (
       'caps_mon' => 'allow profile bootstrap-mds',
     },
   },
+  # MGR management
+  Ceph::Modules $modules = [
+    'status',
+    'dashboard',
+    'restful',
+  ],
   # OSD management
   Ceph::Disks $disks = {
     '2:0:0:0' => {
