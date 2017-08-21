@@ -17,6 +17,6 @@ HOSTS:
       osd2:
         size: 10000
       journal:
-        size: 1000
+        size: 10000
 CONFIG:
   type: foss
