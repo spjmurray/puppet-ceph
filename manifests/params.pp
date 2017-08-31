@@ -5,6 +5,15 @@
 class ceph::params {
 
   case $::facts['os']['name'] {
+    'Debian': {
+      if versioncmp($::facts['os']['release']['major'], '8') >= 0 {
+        $service_provider = 'systemd'
+      } else {
+        err('This module has not been tested against Debian wheezy')
+      }
+      $radosgw_package = 'radosgw'
+      $prerequisites = []
+     }
     'Ubuntu': {
       if versioncmp($::facts['os']['release']['full'], '16.04') >= 0 {
         $service_provider = 'systemd'
