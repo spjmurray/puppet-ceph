@@ -71,7 +71,11 @@ private
     # Parameter list is stripped of leading hyphens
     # An undefined value is an option without an argument
     params.map do |k, v|
-      v == :undef && "--#{k}" || "--#{k} #{v}"
+      if v == :undef or v.empty?
+        "--#{k}"
+      else
+        "--#{k} #{v}"
+      end
     end.join(' ')
   end
 
