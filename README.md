@@ -58,9 +58,10 @@ the special name `defaults`.
 | 1.5.x   | Ubuntu 14.04, Ubuntu 16.04\*, Centos 7 | 10   | 3, 4   |
 | 2.0.x   | Ubuntu 14.04, Ubuntu 16.04\*, Centos 7 | 10   | 3, 4   |
 | 3.1.x   | Ubuntu 14.04, Ubuntu 16.04, Centos 7   | 10   | 4      |
-| 3.2.x   | Ubuntu 16.04, Centos 7                 | 12   | 4      |
+| 3.2.x   | Debian 8+9, Ubuntu 16.04, Centos 7     | 12   | 4, 5   |
 
 \* Ubuntu 16.04 only tested with Puppet 4
+\* Debian 8+9 only tested with Puppet 5
 
 ## Usage
 

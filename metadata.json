@@ -10,8 +10,12 @@
   "tags": ["ceph"],
   "operatingsystem_support": [
     {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [ "8", "9" ]
+    },
+    {
       "operatingsystem": "Ubuntu",
-      "operatingsystemrelease": [ "14.04", "16.04" ]
+      "operatingsystemrelease": [ "16.04" ]
     },
     {
       "operatingsystem": "Centos",
