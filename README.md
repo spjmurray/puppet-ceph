@@ -106,6 +106,7 @@ ceph::keys:
     caps_mon: 'allow *'
     caps_osd: 'allow *'
     caps_mds: 'allow'
+    caps_mgr: 'allow *'
   client.bootstrap-osd:
     filename: '/var/lib/ceph/bootstrap-osd/ceph.keyring'
     key: 'AQDLGtpUdYopJxAAnUZHBu0zuI0IEVKTrzmaGg=='
@@ -177,6 +178,7 @@ ceph::keys:
     caps_mon: 'allow *'
     caps_osd: 'allow *'
     caps_mds: 'allow'
+    caps_mgr: 'allow *'
   client.bootstrap-osd:
     filename: '/var/lib/ceph/bootstrap-osd/ceph.keyring'
     key: "%{hiera('ceph_key_bootstrap_osd')}"
