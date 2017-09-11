@@ -49,7 +49,8 @@ describe 'ceph' do
         disks => {
           'defaults' => {
             'params' => {
-              'fs-type' => 'xfs',
+              'fs-type'   => 'xfs',
+              'filestore' => undef,
             },
           },
           '2:0:0:1' => {

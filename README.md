@@ -120,6 +120,7 @@ ceph::disks:
   defaults:
     params:
       fs-type: 'xfs'
+      filestore: ~
   3:0:0:0:
     journal: '6:0:0:0'
   4:0:0:0:
@@ -236,6 +237,10 @@ ceph::keys:
 
 # Product specific OSD definitions
 ceph::disks:
+  defaults:
+    params:
+      fs-type: 'xfs'
+      filestore: ~
   Slot 01:
     journal: 'Slot 01'
   Slot 02:
