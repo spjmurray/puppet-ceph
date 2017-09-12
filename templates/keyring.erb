@@ -1,14 +1,5 @@
-[<%= @user %>]
+[<%= @name %>]
   key = <%= @key %>
-<% if @caps_mon -%>
-  caps mon = "<%= @caps_mon %>"
-<% end -%>
-<% if @caps_mds -%>
-  caps mds = "<%= @caps_mds %>"
-<% end -%>
-<% if @caps_osd -%>
-  caps osd = "<%= @caps_osd %>"
-<% end -%>
-<% if @caps_mgr -%>
-  caps mgr = "<%= @caps_mgr %>"
+<% @caps.sort.each do |key, value| -%>
+  caps <%= key %> = "<%= value %>"
 <% end -%>

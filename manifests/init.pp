@@ -116,33 +116,43 @@ class ceph (
   # Key management
   Boolean $keys_merge = false,
   Ceph::Keys $keys = {
-    '/etc/ceph/ceph.client.admin.keyring'      => {
-      'user'     => 'client.admin',
-      'key'      => 'AQBAyNlUmO09CxAA2u2p6s38wKkBXaLWFeD7bA==',
-      'caps_mon' => 'allow *',
-      'caps_osd' => 'allow *',
-      'caps_mds' => 'allow',
-      'caps_mgr' => 'allow *',
+    'client.admin'         => {
+      'key'  => 'AQBAyNlUmO09CxAA2u2p6s38wKkBXaLWFeD7bA==',
+      'caps' => {
+        'mon' => 'allow *',
+        'osd' => 'allow *',
+        'mds' => 'allow',
+        'mgr' => 'allow *',
+      },
+      'path'     => '/etc/ceph/ceph.client.admin.keyring',
     },
-    '/var/lib/ceph/bootstrap-mgr/ceph.keyring' => {
-      'user'     => 'client.bootstrap-mgr',
-      'key'      => 'AQC82ppZVlWnABAAPCihMcu7yoTtyjGiCwycDA==',
-      'caps_mon' => 'allow profile bootstrap-mgr',
+    'client.bootstrap-mgr' => {
+      'key'  => 'AQC82ppZVlWnABAAPCihMcu7yoTtyjGiCwycDA==',
+      'caps' => {
+        'mon' => 'allow profile bootstrap-mgr',
+      },
+      'path' => '/var/lib/ceph/bootstrap-mgr/ceph.keyring',
     },
-    '/var/lib/ceph/bootstrap-rgw/ceph.keyring' => {
-      'user'     => 'client.bootstrap-rgw',
-      'key'      => 'AQD+zXZVDljeKRAAKA30V/QvzbI9oUtcxAchog==',
-      'caps_mon' => 'allow profile bootstrap-rgw',
+    'client.bootstrap-rgw' => {
+      'key'  => 'AQD+zXZVDljeKRAAKA30V/QvzbI9oUtcxAchog==',
+      'caps' => {
+        'mon' => 'allow profile bootstrap-rgw',
+      },
+      'path' => '/var/lib/ceph/bootstrap-rgw/ceph.keyring',
     },
-    '/var/lib/ceph/bootstrap-osd/ceph.keyring' => {
-      'user'     => 'client.bootstrap-osd',
-      'key'      => 'AQDLGtpUdYopJxAAnUZHBu0zuI0IEVKTrzmaGg==',
-      'caps_mon' => 'allow profile bootstrap-osd',
+    'client.bootstrap-osd' => {
+      'key'  => 'AQDLGtpUdYopJxAAnUZHBu0zuI0IEVKTrzmaGg==',
+      'caps' => {
+        'mon' => 'allow profile bootstrap-osd',
+      },
+      'path' => '/var/lib/ceph/bootstrap-osd/ceph.keyring',
     },
-    '/var/lib/ceph/bootstrap-mds/ceph.keyring' => {
-      'user'     => 'client.bootstrap-mds',
-      'key'      => 'AQDLGtpUlWDNMRAAVyjXjppZXkEmULAl93MbHQ==',
-      'caps_mon' => 'allow profile bootstrap-mds',
+    'client.bootstrap-mds' => {
+      'key'  => 'AQDLGtpUlWDNMRAAVyjXjppZXkEmULAl93MbHQ==',
+      'caps' => {
+        'mon' => 'allow profile bootstrap-mds',
+      },
+      'path' => '/var/lib/ceph/bootstrap-mds/ceph.keyring',
     },
   },
   # MGR management

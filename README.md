@@ -101,20 +101,29 @@ ceph::conf:
 
 # Create these keyrings on the monitors
 ceph::keys:
-  /etc/ceph/ceph.client.admin.keyring:
-    user: 'client.admin'
+  client.admin:
     key: 'AQBAyNlUmO09CxAA2u2p6s38wKkBXaLWFeD7bA=='
-    caps_mon: 'allow *'
-    caps_osd: 'allow *'
-    caps_mds: 'allow'
-  /var/lib/ceph/bootstrap-osd/ceph.keyring:
-    user: 'client.bootstrap-osd'
+    caps:
+      mon: 'allow *'
+      osd: 'allow *'
+      mds: 'allow'
+      mgr: 'allow *'
+    path: '/etc/ceph/ceph.client.admin.keyring'
+  client.bootstrap-mgr:
+    key: 'AQC82ppZVlWnABAAPCihMcu7yoTtyjGiCwycDA=='
+    caps:
+      mon: 'allow profile bootstrap-mgr'
+    path: '/var/lib/ceph/bootstrap-mgr/ceph.keyring'
+  client.bootstrap-osd:
     key: 'AQDLGtpUdYopJxAAnUZHBu0zuI0IEVKTrzmaGg=='
-    caps_mon: 'allow profile bootstrap-osd'
-  /var/lib/ceph/bootstrap-mds/ceph.keyring:
-    user: 'client.bootstrap-mds'
+    caps:
+      mon: 'allow profile bootstrap-osd'
+    path: '/var/lib/ceph/bootstrap-osd/ceph.keyring'
+  client.bootstrap-mds:
     key: 'AQDLGtpUlWDNMRAAVyjXjppZXkEmULAl93MbHQ=='
-    caps_mon: 'allow profile bootstrap-mds'
+    caps:
+      mon: 'allow profile bootstrap-mds'
+    path: '/var/lib/ceph/bootstrap-mds/ceph.keyring'
 
 # Create the OSDs
 ceph::disks:
@@ -173,34 +182,46 @@ ceph::conf:
 
 # All the static keys on the system
 ceph::keys:
-  /etc/ceph/ceph.client.admin.keyring:
-    user: 'client.admin'
+  client.admin:
     key: "%{hiera('ceph_key_client_admin')}"
-    caps_mon: 'allow *'
-    caps_osd: 'allow *'
-    caps_mds: 'allow'
-  /var/lib/ceph/bootstrap-osd/ceph.keyring:
-    user: 'client.bootstrap-osd'
+    caps:
+      mon: 'allow *'
+      osd: 'allow *'
+      mds: 'allow'
+      mgr: 'allow *'
+    path: '/etc/ceph/ceph.client.admin.keyring'
+  client.bootstrap-osd:
     key: "%{hiera('ceph_key_bootstrap_osd')}"
-    caps_mon: 'allow profile bootstrap-osd'
-  /var/lib/ceph/bootstrap-mds/ceph.keyring:
-    user: 'client.bootstrap-mds'
+    caps:
+      mon: 'allow profile bootstrap-osd'
+    path: '/var/lib/ceph/bootstrap-osd/ceph.keyring'
+  client.bootstrap-mgr:
+    key: "%{hiera('ceph_key_bootstrap_mgr')}"
+    caps:
+      mon: 'allow profile bootstrap-mgr'
+    path: '/var/lib/ceph/bootstrap-mgr/ceph.keyring'
+  client.bootstrap-mds:
     key: "%{hiera('ceph_key_bootstrap_mds')}"
-    caps_mon: 'allow profile bootstrap-mds'
-  /var/lib/ceph/bootstrap-rgw/ceph.keyring:
-    user: 'client.bootstrap-rgw'
+    caps:
+      mon: 'allow profile bootstrap-mds'
+    path: '/var/lib/ceph/bootstrap-mds/ceph.keyring'
+  client.bootstrap-rgw:
     key: "%{hiera('ceph_key_bootstrap_rgw')}"
-    caps_mon: 'allow profile bootstrap-rgw'
-  /etc/ceph/ceph.client.glance.keyring:
-    user: 'client.glance'
+    caps:
+      mon: 'allow profile bootstrap-rgw'
+    path: '/var/lib/ceph/bootstrap-rgw/ceph.keyring'
+  client.glance:
     key: "%{hiera('ceph_key_client_glance')}"
-    caps_mon: 'allow r'
-    caps_osd: 'allow class-read object_prefix rbd_children, allow rwx pool=glance'
-  /etc/ceph/ceph.client.cinder.keyring:
-    user: 'client.cinder'
+    caps:
+      mon: 'allow r'
+      osd: 'allow class-read object_prefix rbd_children, allow rwx pool=glance'
+    path: '/etc/ceph/ceph.client.glance.keyring'
+  client.cinder:
     key: "%{hiera('ceph_key_client_cinder')}"
-    caps_mon: 'allow r'
-    caps_osd: 'allow class-read object_prefix rbd_children, allow rx pool=glance, allow rwx pool=cinder'
+    caps:
+      mon: 'allow r'
+      osd: 'allow class-read object_prefix rbd_children, allow rx pool=glance, allow rwx pool=cinder'
+    path: '/etc/ceph/ceph.client.cinder.keyring'
 ```
 
 ```yaml
@@ -224,12 +245,12 @@ ceph::conf:
 
 # OSD specific static keys
 ceph::keys:
-  /etc/ceph/ceph.client.admin.keyring:
-    user: 'client.admin'
+  client.admin:
     key: "%{hiera('ceph_key_client_admin')}"
-  /var/lib/ceph/bootstrap-osd/ceph.keyring:
-    user: 'client.bootstrap-osd'
+    path: '/etc/ceph/ceph.client.admin.keyring'
+  client.bootstrap-osd:
     key: "%{hiera('ceph_key_bootstrap_osd')}"
+    path: '/var/lib/ceph/bootstrap-osd/ceph.keyring'
 ```
 
 ```yaml
@@ -289,12 +310,12 @@ ceph::conf:
 
 # Rados gateway specific static keys
 ceph::keys:
-  /etc/ceph/ceph.client.admin.keyring:
-    user: 'client.admin'
+  client.admin:
     key: "%{hiera('ceph_key_client_admin')}"
-  /var/lib/ceph/bootstrap-rgw/ceph.keyring:
-    user: 'client.bootstrap-rgw'
+    path: '/etc/ceph/ceph.client.admin.keyring'
+  client.bootstrap-rgw:
     key: "%{hiera('ceph_key_bootstrap_rgw')}"
+    path: '/var/lib/ceph/bootstrap-rgw/ceph.keyring'
 ```
 
 ```yaml
@@ -303,12 +324,12 @@ ceph::keys:
 
 # OpenStack controller specific static keys
 ceph::keys:
-  /etc/ceph/ceph.client.cinder.keyring:
-    user: 'client.cinder'
+  client.cinder:
     key: "%{hiera('ceph_key_client_cinder')}"
-  /etc/ceph/ceph.client.glance.keyring:
-    user: 'client.glance'
+    path: '/etc/ceph/ceph.client.cinder.keyring'
+  client.glance:
     key: "%{hiera('ceph_key_client_glance')}"
+    path: '/etc/ceph/ceph.client.glance.keyring'
 ```
 
 ```yaml
@@ -327,9 +348,9 @@ ceph::conf:
 
 # OpenStack compute specific static keys
 ceph::keys:
-  /etc/ceph/ceph.client.cinder.keyring:
-    user: 'client.cinder'
+  client.cinder:
     key: "%{hiera('ceph_key_client_cinder')}"
+    path: '/etc/ceph/ceph.client.cinder.keyring'
 ```
 
 ## Limitations
