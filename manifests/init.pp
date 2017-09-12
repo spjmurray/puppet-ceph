@@ -116,31 +116,31 @@ class ceph (
   # Key management
   Boolean $keys_merge = false,
   Ceph::Keys $keys = {
-    '/etc/ceph/ceph.client.admin.keyring'      => {
-      'user'     => 'client.admin',
+    'client.admin'         => {
+      'filename' => '/etc/ceph/ceph.client.admin.keyring',
       'key'      => 'AQBAyNlUmO09CxAA2u2p6s38wKkBXaLWFeD7bA==',
       'caps_mon' => 'allow *',
       'caps_osd' => 'allow *',
       'caps_mds' => 'allow',
       'caps_mgr' => 'allow *',
     },
-    '/var/lib/ceph/bootstrap-mgr/ceph.keyring' => {
-      'user'     => 'client.bootstrap-mgr',
+    'client.bootstrap-mgr' => {
+      'filename' => '/var/lib/ceph/bootstrap-mgr/ceph.keyring',
       'key'      => 'AQC82ppZVlWnABAAPCihMcu7yoTtyjGiCwycDA==',
       'caps_mon' => 'allow profile bootstrap-mgr',
     },
-    '/var/lib/ceph/bootstrap-rgw/ceph.keyring' => {
-      'user'     => 'client.bootstrap-rgw',
+    'client.bootstrap-rgw' => {
+      'filename' => '/var/lib/ceph/bootstrap-rgw/ceph.keyring',
       'key'      => 'AQD+zXZVDljeKRAAKA30V/QvzbI9oUtcxAchog==',
       'caps_mon' => 'allow profile bootstrap-rgw',
     },
-    '/var/lib/ceph/bootstrap-osd/ceph.keyring' => {
-      'user'     => 'client.bootstrap-osd',
+    'client.bootstrap-osd' => {
+      'filename' => '/var/lib/ceph/bootstrap-osd/ceph.keyring',
       'key'      => 'AQDLGtpUdYopJxAAnUZHBu0zuI0IEVKTrzmaGg==',
       'caps_mon' => 'allow profile bootstrap-osd',
     },
-    '/var/lib/ceph/bootstrap-mds/ceph.keyring' => {
-      'user'     => 'client.bootstrap-mds',
+    'client.bootstrap-mds' => {
+      'filename' => '/var/lib/ceph/bootstrap-mds/ceph.keyring',
       'key'      => 'AQDLGtpUlWDNMRAAVyjXjppZXkEmULAl93MbHQ==',
       'caps_mon' => 'allow profile bootstrap-mds',
     },
