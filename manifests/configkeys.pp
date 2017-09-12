@@ -6,9 +6,11 @@ class ceph::configkeys {
 
   assert_private()
 
-  $::ceph::config_keys.each |$key, $value| {
-    ceph::configkey { $key:
-      value => $value,
+  if $::ceph::mon {
+    $::ceph::config_keys.each |$key, $value| {
+      ceph::configkey { $key:
+        value => $value,
+      }
     }
   }
 
