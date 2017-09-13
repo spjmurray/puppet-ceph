@@ -10,8 +10,8 @@ EOS
 KEY = <<EOS.gsub(/^\s+\|/, '')
   |[client.admin]
   |  key = AQBAyNlUmO09CxAA2u2p6s38wKkBXaLWFeD7bA==
-  |  caps mon = "allow *"
   |  caps mds = "allow"
+  |  caps mon = "allow *"
   |  caps osd = "allow *"
 EOS
 
@@ -55,12 +55,14 @@ describe 'ceph', :type => :class do
         }
       },
       :keys => {
-        '/etc/ceph/ceph.client.admin.keyring' => {
-          'user'     => 'client.admin',
-          'key'      => 'AQBAyNlUmO09CxAA2u2p6s38wKkBXaLWFeD7bA==',
-          'caps_mon' => 'allow *',
-          'caps_osd' => 'allow *',
-          'caps_mds' => 'allow'
+        'client.admin' => {
+          'key'  => 'AQBAyNlUmO09CxAA2u2p6s38wKkBXaLWFeD7bA==',
+          'caps' => {
+            'mon' => 'allow *',
+            'osd' => 'allow *',
+            'mds' => 'allow'
+          },
+          'path' => '/etc/ceph/ceph.client.admin.keyring'
         }
       },
       :config_keys => {
@@ -305,12 +307,14 @@ describe 'ceph', :type => :class do
 
     context 'ceph::auth' do
       it 'populates keyrings correctly' do
-        is_expected.to contain_ceph__keyring('/etc/ceph/ceph.client.admin.keyring').with(
-          'user' => 'client.admin',
-          'key' => 'AQBAyNlUmO09CxAA2u2p6s38wKkBXaLWFeD7bA==',
-          'caps_mon' => 'allow *',
-          'caps_osd' => 'allow *',
-          'caps_mds' => 'allow'
+        is_expected.to contain_ceph__keyring('client.admin').with(
+          'key'  => 'AQBAyNlUmO09CxAA2u2p6s38wKkBXaLWFeD7bA==',
+          'caps' => {
+            'mon' => 'allow *',
+            'osd' => 'allow *',
+            'mds' => 'allow'
+          },
+          'path' => '/etc/ceph/ceph.client.admin.keyring'
         )
       end
     end
@@ -322,12 +326,12 @@ describe 'ceph', :type => :class do
           'group' => 'mouse',
           'mode' => '0644',
           'content' => KEY
-        ).that_comes_before('Exec[keyring inject client.admin]')
+        )
       end
 
       it 'injects the keyring on a monitor' do
         is_expected.to contain_exec('keyring inject client.admin').with(
-          'command' => '/usr/bin/ceph -n mon. -k /var/lib/ceph/mon/ceph-test/keyring auth import -i /etc/ceph/ceph.client.admin.keyring',
+          'command' => "/bin/echo '#{KEY}' | /usr/bin/ceph -n mon. -k /var/lib/ceph/mon/ceph-test/keyring auth import -i -",
           'unless' => '/usr/bin/ceph -n mon. -k /var/lib/ceph/mon/ceph-test/keyring auth list | grep AQBAyNlUmO09CxAA2u2p6s38wKkBXaLWFeD7bA=='
         )
       end
