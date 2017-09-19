@@ -3,7 +3,7 @@ require 'spec_helper_acceptance'
 describe 'ceph' do
   context 'initialization' do
     # As of 10.2.0 127.0.0.0/8 doesn't work, so use the VM's IP
-    conf = <<-EOS
+    conf = <<-CONFIG
       conf => {
         'global'                => {
           'fsid'                      => '62ed9bd6-adf4-11e4-8fb5-3c970ebb2b86',
@@ -25,12 +25,12 @@ describe 'ceph' do
           'rgw frontends' => '"civetweb port=7480"'
         },
       },
-    EOS
+    CONFIG
 
     # Select the disk layout based on the VM type as this defines
     # the host bus adaptor and how the disks are presented
     if default['hypervisor'] == 'vagrant'
-      disks = <<-EOS
+      disks = <<-DISKS
         disks => {
           'defaults' => {
             'db'     => '5:0:0:0',
@@ -43,9 +43,9 @@ describe 'ceph' do
           '3:0:0:0' => {},
           '4:0:0:0' => {},
         },
-      EOS
+      DISKS
     elsif default['hypervisor'] == 'openstack'
-      disks = <<-EOS
+      disks = <<-DISKS
         disks => {
           'defaults' => {
             'params' => {
@@ -63,12 +63,12 @@ describe 'ceph' do
             'journal' => '2:0:0:4',
           },
         },
-      EOS
+      DISKS
     else
       raise ArgumentError, 'Unsupported hypervisor'
     end
 
-    pp = <<-EOS
+    pp = <<-MANIFEST
       Exec { path => '/bin:/usr/bin:/sbin:/usr/sbin' }
       class { 'ceph':
         mon => true,
@@ -78,7 +78,7 @@ describe 'ceph' do
         #{conf}
         #{disks}
       }
-    EOS
+    MANIFEST
 
     it 'provisions with no errors' do
       apply_manifest(pp, :catch_failures => true)

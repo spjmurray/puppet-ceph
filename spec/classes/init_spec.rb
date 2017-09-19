@@ -1,19 +1,19 @@
 require 'spec_helper'
 
-CONF = <<EOS.gsub(/^\s+\|/, '')
+CONF = <<CEPH_CONF.gsub(/^\s+\|/, '')
   |[main]
   |  fsid = 12345
   |[osd]
   |  osd_journal_size = 12345
-EOS
+CEPH_CONF
 
-KEY = <<EOS.gsub(/^\s+\|/, '')
+KEY = <<CLIENT_ADMIN_KEY.gsub(/^\s+\|/, '')
   |[client.admin]
   |  key = AQBAyNlUmO09CxAA2u2p6s38wKkBXaLWFeD7bA==
   |  caps mds = "allow"
   |  caps mon = "allow *"
   |  caps osd = "allow *"
-EOS
+CLIENT_ADMIN_KEY
 
 describe 'ceph', :type => :class do
   let :params do

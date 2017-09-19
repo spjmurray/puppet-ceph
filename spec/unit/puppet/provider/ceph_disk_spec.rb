@@ -138,7 +138,7 @@ describe Puppet::Type.type(:osd).provider(:ceph_disk) do
 
   context '::device_prepared?' do
     it 'returns true if the device is a regular osd' do
-      sgdisk = <<-EOS
+      sgdisk = <<-SGDISK
         Partition GUID code: 4FBD7E29-9D25-41B8-AFD0-062C0CEFF05D (Unknown)
         Partition unique GUID: 784C47C1-3FA2-4E46-B53D-E1896FA4A550
         First sector: 2048 (at 1024.0 KiB)
@@ -146,7 +146,7 @@ describe Puppet::Type.type(:osd).provider(:ceph_disk) do
         Partition size: 7814035087 sectors (3.6 TiB)
         Attribute flags: 0000000000000000
         Partition name: 'ceph data'
-      EOS
+      SGDISK
 
       Puppet::Util::Execution.stubs(:execute).with('sgdisk -i 1 /dev/sdb').returns(sgdisk)
 
@@ -154,7 +154,7 @@ describe Puppet::Type.type(:osd).provider(:ceph_disk) do
     end
 
     it 'returns false if the device is not an osd' do
-      sgdisk = <<-EOS
+      sgdisk = <<-SGDISK
         Partition GUID code: 0FC63DAF-8483-4772-8E79-3D69D8477DE4 (Linux filesystem)
         Partition unique GUID: D8A68275-1217-4D9C-8752-1FB1D0AB0D25
         First sector: 2048 (at 1024.0 KiB)
@@ -162,7 +162,7 @@ describe Puppet::Type.type(:osd).provider(:ceph_disk) do
         Partition size: 497664 sectors (243.0 MiB)
         Attribute flags: 0000000000000000
         Partition name: 'Linux filesystem'
-      EOS
+      SGDISK
 
       Puppet::Util::Execution.stubs(:execute).with('sgdisk -i 1 /dev/sdb').returns(sgdisk)
 
