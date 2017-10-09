@@ -35,10 +35,10 @@ based on whether ceph-disk has been run.
 The OSD provider can also operate on enclosures with SES firmware running on
 a SAS expander.  In some cases SCSI addresses aren't predicatable and susceptible
 to the same enumeration problem as /dev device names.  In these cases the devices
-can be provisioned with 'Slot 01' which directly correlates to a slot name
-found in sysfs under /sys/class/enclosure.  On newer expanders the labels may be
-formatted as DISK00 which is also supported.  The two addressing modes can be used
-interchangably.
+can be provisioned with 'Slot 01' or 'SLOT 001' which directly correlates to a
+slot name found in sysfs under /sys/class/enclosure.  On newer expanders the
+labels may be formatted as DISK00 which is also supported.  The two addressing
+modes can be used interchangably.
 
 The OSD provider also accepts an arbitrary hash of parameters to be passed to
 ceph-disk.  The keys are the long options supported by ceph-disk stripped of the

@@ -17,6 +17,14 @@
 #   },
 # }
 #
+# osd { 'SLOT 001':
+#   journal => 'SLOT 001',
+#   params => {
+#     'bluetore' => undef,
+#     'fstype'   => 'xfs',
+#   },
+# }
+#
 Puppet::Type.newtype(:osd) do
   @doc = 'Create an OSD based on physical hardware address'
 
@@ -70,8 +78,8 @@ Puppet::Type.newtype(:osd) do
     return if address.start_with?('/dev/')
     # SCSI address e.g. 1:0:0:0
     return if address =~ /^\d+:\d+:\d+:\d+$/
-    # Expander slot e.g. Slot 01, DISK00
-    return if address =~ /^(Slot \d{2}|DISK\d{2})$/
+    # Expander slot e.g. SLOT 001, Slot 01, DISK00
+    return if address =~ /^(SLOT \d{3}|Slot \d{2}|DISK\d{2})$/
     raise ArgumentError, 'osd::validate_address invalid value'
   end
 

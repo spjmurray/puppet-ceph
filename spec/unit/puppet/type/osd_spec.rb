@@ -26,6 +26,12 @@ describe Puppet::Type.type(:osd) do
 
     it 'accepts slot IDs' do
       expect do
+        described_class.new(:name => 'SLOT 001')
+      end.to_not raise_error
+    end
+
+    it 'accepts slot IDs' do
+      expect do
         described_class.new(:name => 'Slot 01')
       end.to_not raise_error
     end
@@ -63,6 +69,12 @@ describe Puppet::Type.type(:osd) do
     it 'accepts scsi addresses' do
       expect do
         described_class.new(:name => '0:0:0:0', :journal => '1:0:0:0')
+      end.to_not raise_error
+    end
+
+    it 'accepts slot IDs' do
+      expect do
+        described_class.new(:name => '0:0:0:0', :journal => 'SLOT 001')
       end.to_not raise_error
     end
 
