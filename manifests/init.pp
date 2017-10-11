@@ -107,7 +107,7 @@ class ceph (
     },
   },
   Ceph::ConfigKeys $config_keys = {
-    'mgr/dashboard/server_addr' => '0.0.0.0',
+    'mgr/dashboard/server_addr' => '::',
     'mgr/dashboard/server_port' => 7000,
   },
   # Monitor configuration
