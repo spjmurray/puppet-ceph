@@ -19,6 +19,8 @@
 
 Deploys Ceph components
 
+**Due to DataCentred ceasing to trade as of November 2017 I no longer have either a production ceph cluster to operate nor a cloud to perform testing on.  As a result this module will no-longer be maintained by myself.  Feel free to fork and continue to develop this module.  To all the users over the years thank you for your support and all the best in the future - Simon**
+
 ## Module Description
 
 Very lightweight implementation of Ceph deployment.  This module depends quite
