@@ -28,6 +28,9 @@
 # [*package_ensure*]
 #   Ceph version to install
 #
+# [*package_options*]
+#   install_options for the Ceph package
+#
 # [*user*]
 #   Username ceph runs as
 #
@@ -78,6 +81,7 @@ class ceph (
   String $repo_version = 'luminous',
   # Package management
   String $package_ensure = 'installed',
+  String $package_options = 'undef',
   # User management
   String $user = 'ceph',
   String $group = 'ceph',
