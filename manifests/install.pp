@@ -5,7 +5,8 @@ class ceph::install {
   assert_private()
 
   package { 'ceph':
-    ensure => $::ceph::package_ensure,
+    ensure          => $::ceph::package_ensure,
+    install_options => $::ceph::package_options,
   }
 
   if $::facts['os']['name'] == 'Ubuntu' {
