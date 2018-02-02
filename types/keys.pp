@@ -7,4 +7,7 @@ type Ceph::Keys = Hash[String[1], Struct[{
     Optional[mgr] => String[1],
   }],
   Optional[path]     => String[1],
+  Optional[owner]    => String[1],
+  Optional[group]    => String[1],
+  Optional[mode]     => String[1],
 }]]

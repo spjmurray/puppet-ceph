@@ -26,7 +26,7 @@ private
 
   # Translate a slot number into a device node
   # Params:
-  # +slot+:: Slot number of the SAS expander e.g. "Slot 02"
+  # +slot+:: Slot number of the SAS expander e.g. "Slot 02", "SLOT 002"
   def self.enclosure_slot_to_dev(slot)
     # Get the expander
     # TODO: Supports one enclosure services device, need a way of reliably
@@ -49,7 +49,7 @@ private
   def self.identifier_to_dev(identifier)
     if identifier.start_with?('/dev/')
       identifier
-    elsif identifier.start_with?('Slot', 'DISK')
+    elsif identifier.start_with?('SLOT', 'Slot', 'DISK')
       enclosure_slot_to_dev(identifier)
     elsif identifier =~ /^\d+:\d+:\d+:\d+$/
       scsi_address_to_dev(identifier)
